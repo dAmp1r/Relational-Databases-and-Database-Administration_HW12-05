@@ -22,7 +22,8 @@
 
 запрос до 
 
-```| -> Table scan on <temporary>  (cost=2.5..2.5 rows=0) (actual time=7806..7806 rows=391 loops=1)
+```
+| -> Table scan on <temporary>  (cost=2.5..2.5 rows=0) (actual time=7806..7806 rows=391 loops=1)
     -> Temporary table with deduplication  (cost=0..0 rows=0) (actual time=7806..7806 rows=391 loops=1)
         -> Window aggregate with buffering: sum(payment.amount) OVER (PARTITION BY c.customer_id,f.title )   (actual time=3098..7525 rows=642000 loops=1)
             -> Sort: c.customer_id, f.title  (actual time=3098..3219 rows=642000 loops=1)
@@ -43,7 +44,8 @@
 
 запрос после 
 
-```| -> Table scan on <temporary>  (actual time=12.1..12.1 rows=391 loops=1)
+```
+| -> Table scan on <temporary>  (actual time=12.1..12.1 rows=391 loops=1)
     -> Aggregate using temporary table  (actual time=12.1..12.1 rows=391 loops=1)
         -> Nested loop inner join  (cost=12610 rows=15990) (actual time=0.091..11.2 rows=642 loops=1)
             -> Nested loop inner join  (cost=7014 rows=15990) (actual time=0.0833..10.4 rows=642 loops=1)
@@ -60,7 +62,8 @@
 
 ```explain analyze select concat(c.last_name, ' ', c.first_name) as client, sum(p.amount) from customer c join rental r on c.customer_id = r.customer_id join payment p on r.rental_date = p.payment_date where payment_date >= '2005-07-30' and payment_date < date_add('2005-07-30', interval 1 day) group by c.customer_id;```
 
-```| -> Table scan on <temporary>  (actual time=3.95..4.01 rows=391 loops=1)
+```
+|-> Table scan on <temporary>  (actual time=3.95..4.01 rows=391 loops=1)
     -> Aggregate using temporary table  (actual time=3.95..3.95 rows=391 loops=1)
         -> Nested loop inner join  (cost=573 rows=634) (actual time=0.0309..3.43 rows=642 loops=1)
             -> Nested loop inner join  (cost=351 rows=634) (actual time=0.0209..1.17 rows=634 loops=1)
