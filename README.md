@@ -1,5 +1,7 @@
 # Relational-Databases-and-Database-Administration_HW12-05
 
+*Индексы - Горбунов Д.Н.*
+
 Задние 1.
 
 ```select sum(index_length) / sum(data_length) * 100 from information_schema.tables;```
