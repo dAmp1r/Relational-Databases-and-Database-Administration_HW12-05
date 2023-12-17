@@ -53,3 +53,20 @@
             -> Single-row index lookup on c using PRIMARY (customer_id=r.customer_id)  (cost=0.25 rows=1) (actual time=0.00104..0.00106 rows=1 loops=642)
  |
 ```
+
+Доработка 
+
+Внес указанные изменения 
+
+```explain analyze select concat(c.last_name, ' ', c.first_name) as client, sum(p.amount) from customer c join rental r on c.customer_id = r.customer_id join payment p on r.rental_date = p.payment_date where payment_date >= '2005-07-30' and payment_date < date_add('2005-07-30', interval 1 day) group by c.customer_id;```
+
+```| -> Table scan on <temporary>  (actual time=3.95..4.01 rows=391 loops=1)
+    -> Aggregate using temporary table  (actual time=3.95..3.95 rows=391 loops=1)
+        -> Nested loop inner join  (cost=573 rows=634) (actual time=0.0309..3.43 rows=642 loops=1)
+            -> Nested loop inner join  (cost=351 rows=634) (actual time=0.0209..1.17 rows=634 loops=1)
+                -> Filter: ((r.rental_date >= TIMESTAMP'2005-07-30 00:00:00') and (r.rental_date < <cache>(('2005-07-30' + interval 1 day))))  (cost=129 rows=634) (actual time=0.0138..0.392 rows=634 loops=1)
+                    -> Covering index range scan on r using rental_date over ('2005-07-30 00:00:00' <= rental_date < '2005-07-31 00:00:00')  (cost=129 rows=634) (actual time=0.0119..0.237 rows=634 loops=1)
+                -> Single-row index lookup on c using PRIMARY (customer_id=r.customer_id)  (cost=0.25 rows=1) (actual time=0.00107..0.00109 rows=1 loops=634)
+            -> Index lookup on p using payment_date (payment_date=r.rental_date)  (cost=0.25 rows=1) (actual time=0.00299..0.00336 rows=1.01 loops=634)
+ |
+```
